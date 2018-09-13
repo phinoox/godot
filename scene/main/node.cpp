@@ -301,6 +301,29 @@ void Node::_propagate_exit_tree() {
 	emit_signal(SceneStringNames::get_singleton()->tree_exited);
 }
 
+void Node::set_tags(String tags){
+	this->data.tags=tags;
+}
+
+String Node::get_tags() const{
+	return data.tags;
+}
+
+Vector<String>Node:: get_tag_list(){
+    Vector<String> splitted=data.tags.split(",");
+	return splitted;
+}
+
+bool Node::has_tag(const String &tag){
+	Vector<String> taglist = get_tag_list();
+	for(int i=0;i<taglist.size();i++){
+		String ftag = taglist[i];
+		if(ftag.match(tag))
+		   return true;
+	}
+	return false;
+}
+
 void Node::move_child(Node *p_child, int p_pos) {
 
 	ERR_FAIL_NULL(p_child);
@@ -1549,6 +1572,29 @@ Node *Node::find_node(const String &p_mask, bool p_recursive, bool p_owned) cons
 			return ret;
 	}
 	return NULL;
+}
+
+Array Node::find_nodes_by_tag(const String &p_mask, bool p_recursive, bool p_owned) const {
+
+	Node *const *cptr = data.children.ptr();
+	Array ret;
+	int ccount = data.children.size();
+	for (int i = 0; i < ccount; i++) {
+		if (p_owned && !cptr[i]->data.owner)
+			continue;
+		if (cptr[i]->has_tag(p_mask))
+			ret.push_back(cptr[i]);
+
+		if (!p_recursive)
+			continue;
+
+		Array recret = cptr[i]->find_nodes_by_tag(p_mask, true, p_owned);
+		for(int j=0;j<recret.size();j++){
+		ret.append(recret[j]);
+		}
+	}
+	
+	return ret;
 }
 
 Node *Node::get_parent() const {
@@ -2834,6 +2880,7 @@ void Node::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_node", "path"), &Node::get_node);
 	ClassDB::bind_method(D_METHOD("get_parent"), &Node::get_parent);
 	ClassDB::bind_method(D_METHOD("find_node", "mask", "recursive", "owned"), &Node::find_node, DEFVAL(true), DEFVAL(true));
+	ClassDB::bind_method(D_METHOD("find_nodes_by_tag", "mask", "recursive", "owned"), &Node::find_nodes_by_tag, DEFVAL(true), DEFVAL(true));
 	ClassDB::bind_method(D_METHOD("has_node_and_resource", "path"), &Node::has_node_and_resource);
 	ClassDB::bind_method(D_METHOD("get_node_and_resource", "path"), &Node::_get_node_and_resource);
 
@@ -2872,6 +2919,10 @@ void Node::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_processing_unhandled_key_input"), &Node::is_processing_unhandled_key_input);
 	ClassDB::bind_method(D_METHOD("set_pause_mode", "mode"), &Node::set_pause_mode);
 	ClassDB::bind_method(D_METHOD("get_pause_mode"), &Node::get_pause_mode);
+	ClassDB::bind_method(D_METHOD("set_tags", "tags"), &Node::set_tags);
+	ClassDB::bind_method(D_METHOD("get_tags"), &Node::get_tags);
+	ClassDB::bind_method(D_METHOD("has_tag", "tag"), &Node::has_tag);
+	ClassDB::bind_method(D_METHOD("get_tag_list"), &Node::get_tags);
 	ClassDB::bind_method(D_METHOD("can_process"), &Node::can_process);
 	ClassDB::bind_method(D_METHOD("print_stray_nodes"), &Node::_print_stray_nodes);
 	ClassDB::bind_method(D_METHOD("get_position_in_parent"), &Node::get_position_in_parent);
@@ -2981,6 +3032,7 @@ void Node::_bind_methods() {
 	ADD_PROPERTYNZ(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_NONE, "", 0), "set_name", "get_name");
 	ADD_PROPERTYNZ(PropertyInfo(Variant::STRING, "filename", PROPERTY_HINT_NONE, "", 0), "set_filename", "get_filename");
 	ADD_PROPERTYNZ(PropertyInfo(Variant::OBJECT, "owner", PROPERTY_HINT_RESOURCE_TYPE, "Node", 0), "set_owner", "get_owner");
+	ADD_PROPERTYNZ(PropertyInfo(Variant::STRING, "tags", PROPERTY_HINT_NONE, "Comma seperated List of tags"), "set_tags", "get_tags");
 
 	BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
 	BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));
