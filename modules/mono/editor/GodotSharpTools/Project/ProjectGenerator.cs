@@ -143,7 +143,7 @@ namespace GodotSharpTools.Project
             mainGroup.AddProperty("OutputPath", Path.Combine("bin", "$(Configuration)"));
             mainGroup.AddProperty("RootNamespace", name);
             mainGroup.AddProperty("AssemblyName", name);
-            mainGroup.AddProperty("TargetFrameworkVersion", "v4.5");
+            mainGroup.AddProperty("TargetFrameworkVersion", "v4.7");
 
             var debugGroup = root.AddPropertyGroup();
             debugGroup.Condition = " '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ";
