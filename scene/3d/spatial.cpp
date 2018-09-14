@@ -502,7 +502,7 @@ void Spatial::_propagate_visibility_changed() {
 	for (List<Spatial *>::Element *E = data.children.front(); E; E = E->next()) {
 
 		Spatial *c = E->get();
-		if (!c || !c->data.visible)
+		if (!c || !c->is_visible())
 			continue;
 		c->_propagate_visibility_changed();
 	}
@@ -510,7 +510,7 @@ void Spatial::_propagate_visibility_changed() {
 
 void Spatial::show() {
 
-	if (data.visible)
+	if (is_visible())
 		return;
 
 	data.visible = true;
@@ -523,7 +523,7 @@ void Spatial::show() {
 
 void Spatial::hide() {
 
-	if (!data.visible)
+	if (!is_visible())
 		return;
 
 	data.visible = false;
@@ -539,7 +539,7 @@ bool Spatial::is_visible_in_tree() const {
 	const Spatial *s = this;
 
 	while (s) {
-		if (!s->data.visible) {
+		if (!s->is_visible()) {
 			return false;
 		}
 		s = s->data.parent;
@@ -549,17 +549,33 @@ bool Spatial::is_visible_in_tree() const {
 }
 
 void Spatial::set_visible(bool p_visible) {
-
+#ifdef TOOLS_ENABLED
 	if (p_visible)
+#else
+   if (p_visible&&!data.editor_visible_only)
+#endif
 		show();
 	else
 		hide();
 }
 
-bool Spatial::is_visible() const {
 
+bool Spatial::is_visible() const {
+#ifdef TOOLS_ENABLED
 	return data.visible;
+#else
+return data.visible&&!data.editor_visible_only;
+#endif
 }
+
+bool Spatial::is_editor_visible_only() const{
+	return data.editor_visible_only;
+}
+
+void Spatial::set_editor_visible_only(bool visible){
+	data.editor_visible_only=visible;
+}
+
 
 void Spatial::rotate_object_local(const Vector3 &p_axis, float p_angle) {
 	Transform t = get_transform();
@@ -737,6 +753,9 @@ void Spatial::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_visible", "visible"), &Spatial::set_visible);
 	ClassDB::bind_method(D_METHOD("is_visible"), &Spatial::is_visible);
+	ClassDB::bind_method(D_METHOD("set_editor_visible_only", "visible"), &Spatial::set_editor_visible_only);
+	ClassDB::bind_method(D_METHOD("is_editor_visible_only"), &Spatial::is_editor_visible_only);
+	
 	ClassDB::bind_method(D_METHOD("is_visible_in_tree"), &Spatial::is_visible_in_tree);
 	ClassDB::bind_method(D_METHOD("show"), &Spatial::show);
 	ClassDB::bind_method(D_METHOD("hide"), &Spatial::hide);
@@ -791,6 +810,7 @@ void Spatial::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "scale", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_scale", "get_scale");
 	ADD_GROUP("Visibility", "");
 	ADD_PROPERTYNO(PropertyInfo(Variant::BOOL, "visible"), "set_visible", "is_visible");
+	ADD_PROPERTYNO(PropertyInfo(Variant::BOOL, "editor_visible_only"), "set_editor_visible_only", "is_editor_visible_only");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "gizmo", PROPERTY_HINT_RESOURCE_TYPE, "SpatialGizmo", 0), "set_gizmo", "get_gizmo");
 
 	ADD_SIGNAL(MethodInfo("visibility_changed"));
@@ -809,6 +829,7 @@ Spatial::Spatial() :
 	data.viewport = NULL;
 	data.inside_world = false;
 	data.visible = true;
+	data.editor_visible_only = false;
 
 #ifdef TOOLS_ENABLED
 	data.gizmo_disabled = false;

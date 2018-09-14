@@ -92,6 +92,7 @@ class Spatial : public Node {
 		bool notify_transform;
 
 		bool visible;
+		bool editor_visible_only;
 
 #ifdef TOOLS_ENABLED
 		Ref<SpatialGizmo> gizmo;
@@ -189,6 +190,8 @@ public:
 
 	void set_visible(bool p_visible);
 	bool is_visible() const;
+	void set_editor_visible_only(bool p_visible);
+	bool is_editor_visible_only() const;
 	void show();
 	void hide();
 	bool is_visible_in_tree() const;
