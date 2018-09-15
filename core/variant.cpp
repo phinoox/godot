@@ -37,6 +37,7 @@
 #include "resource.h"
 #include "scene/gui/control.h"
 #include "scene/main/node.h"
+#include "scene/behavior/btnode.h"
 #include "variant_parser.h"
 
 String Variant::get_type_name(Variant::Type p_type) {
@@ -1743,6 +1744,15 @@ Variant::operator Node *() const {
 	else
 		return NULL;
 }
+
+Variant::operator BtNode *() const {
+
+	if (type == OBJECT)
+		return Object::cast_to<BtNode>(_get_obj().obj);
+	else
+		return NULL;
+}
+
 Variant::operator Control *() const {
 
 	if (type == OBJECT)

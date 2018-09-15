@@ -56,6 +56,7 @@
 class RefPtr;
 class Object;
 class Node; // helper
+class BtNode; //HELP!! WHAT AM I DOING
 class Control; // helper
 
 struct PropertyInfo;
@@ -198,6 +199,7 @@ public:
 
 	operator Object *() const;
 	operator Node *() const;
+	operator BtNode *() const;
 	operator Control *() const;
 
 	operator Dictionary() const;

@@ -152,6 +152,8 @@
 #include "scene/resources/world.h"
 #include "scene/resources/world_2d.h"
 #include "scene/scene_string_names.h"
+#include "scene/behavior/btnode.h"
+
 
 #include "scene/3d/particles.h"
 #include "scene/3d/scenario_fx.h"
@@ -242,6 +244,7 @@ void register_scene_types() {
 
 	ClassDB::register_class<Object>();
 
+	ClassDB::register_class<BtNode>();
 	ClassDB::register_class<Node>();
 	ClassDB::register_virtual_class<InstancePlaceholder>();
 
