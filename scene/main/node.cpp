@@ -324,6 +324,14 @@ bool Node::has_tag(const String &tag){
 	return false;
 }
 
+void Node::set_bt_root(BtNode* new_bt_root){
+	data.bt_root=new_bt_root;
+}
+
+BtNode* Node::get_bt_root(){
+	return data.bt_root;
+}
+
 void Node::move_child(Node *p_child, int p_pos) {
 
 	ERR_FAIL_NULL(p_child);
@@ -2921,6 +2929,8 @@ void Node::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_pause_mode"), &Node::get_pause_mode);
 	ClassDB::bind_method(D_METHOD("set_tags", "tags"), &Node::set_tags);
 	ClassDB::bind_method(D_METHOD("get_tags"), &Node::get_tags);
+	ClassDB::bind_method(D_METHOD("set_bt_root", "new_root"), &Node::set_bt_root);
+	ClassDB::bind_method(D_METHOD("get_bt_root"), &Node::get_bt_root);
 	ClassDB::bind_method(D_METHOD("has_tag", "tag"), &Node::has_tag);
 	ClassDB::bind_method(D_METHOD("get_tag_list"), &Node::get_tags);
 	ClassDB::bind_method(D_METHOD("can_process"), &Node::can_process);
@@ -3033,6 +3043,7 @@ void Node::_bind_methods() {
 	ADD_PROPERTYNZ(PropertyInfo(Variant::STRING, "filename", PROPERTY_HINT_NONE, "", 0), "set_filename", "get_filename");
 	ADD_PROPERTYNZ(PropertyInfo(Variant::OBJECT, "owner", PROPERTY_HINT_RESOURCE_TYPE, "Node", 0), "set_owner", "get_owner");
 	ADD_PROPERTYNZ(PropertyInfo(Variant::STRING, "tags", PROPERTY_HINT_NONE, "Comma seperated List of tags"), "set_tags", "get_tags");
+	ADD_PROPERTYNZ(PropertyInfo(Variant::OBJECT, "bt_root", PROPERTY_HINT_NONE, "root of behavior tree"), "set_bt_root", "get_bt_root");
 
 	BIND_VMETHOD(MethodInfo("_process", PropertyInfo(Variant::REAL, "delta")));
 	BIND_VMETHOD(MethodInfo("_physics_process", PropertyInfo(Variant::REAL, "delta")));

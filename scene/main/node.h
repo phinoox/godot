@@ -38,6 +38,7 @@
 #include "project_settings.h"
 #include "scene/main/scene_tree.h"
 #include "script_language.h"
+#include "scene/behavior/btnode.h"
 
 class Viewport;
 class SceneState;
@@ -143,6 +144,7 @@ private:
 
 		mutable NodePath *path_cache;
 		String tags;
+		BtNode* bt_root;
 
 	} data;
 
@@ -238,6 +240,10 @@ public:
 	void set_tags(String tags);
 	Vector<String> get_tag_list();
 	bool has_tag(const String &tag);
+
+    void set_bt_root(BtNode* new_bt_root);
+	BtNode* get_bt_root();
+
 	StringName get_name() const;
 	void set_name(const String &p_name);
 

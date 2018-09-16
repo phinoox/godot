@@ -74,16 +74,9 @@ BIND_ENUM_CONSTANT(BT_TYPE_SELECTOR);
     BIND_ENUM_CONSTANT(BT_STATE_RUNNING);
     BIND_ENUM_CONSTANT(BT_STATE_SUCCESS);
 
-	//ClassDB::bind_method(D_METHOD("add_child_below_node", "node", "child_node", "legible_unique_name"), &Node::add_child_below_node, DEFVAL(false));
-    ADD_GROUP("Behavior", "");
-	//ADD_PROPERTYNZ(PropertyInfo(Variant::TRANSFORM, "transform", PROPERTY_HINT_NONE, ""), "set_transform", "get_transform");
-	ADD_PROPERTYNZ(PropertyInfo(Variant::INT, "node_type", PROPERTY_HINT_ENUM, "Selector,Sequence,Decorator,Leaf"), "set_type", "get_type");
-    ADD_PROPERTYNZ(PropertyInfo(Variant::INT, "node_state", PROPERTY_HINT_ENUM, "Success,Failure,Running,Paused"), "set_state", "get_state");
-    ADD_PROPERTYNZ(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_TYPE_STRING), "set_name", "get_name");
-    ADD_PROPERTYNZ(PropertyInfo(Variant::OBJECT, "parent", PROPERTY_HINT_NONE), "set_parent", "get_parent");
-    ADD_PROPERTYNZ(PropertyInfo(Variant::OBJECT, "root", PROPERTY_HINT_NONE), "set_root", "get_root");
-
-    //
+     //
+    ClassDB::bind_method(D_METHOD("get_name"), &BtNode::get_name);
+    ClassDB::bind_method(D_METHOD("set_name","new_name"), &BtNode::set_name);
     ClassDB::bind_method(D_METHOD("get_root"), &BtNode::get_root);
     ClassDB::bind_method(D_METHOD("set_root","new_root"), &BtNode::set_root);
     ClassDB::bind_method(D_METHOD("get_parent"), &BtNode::get_parent);
@@ -93,6 +86,17 @@ BIND_ENUM_CONSTANT(BT_TYPE_SELECTOR);
     ClassDB::bind_method(D_METHOD("get_state"), &BtNode::get_state);
     ClassDB::bind_method(D_METHOD("set_state","new_state"), &BtNode::set_state);
 
+
+	//ClassDB::bind_method(D_METHOD("add_child_below_node", "node", "child_node", "legible_unique_name"), &Node::add_child_below_node, DEFVAL(false));
+    ADD_GROUP("Behavior", "");
+	//ADD_PROPERTYNZ(PropertyInfo(Variant::TRANSFORM, "transform", PROPERTY_HINT_NONE, ""), "set_transform", "get_transform");
+	ADD_PROPERTYNZ(PropertyInfo(Variant::INT, "node_type", PROPERTY_HINT_ENUM, "Selector,Sequence,Decorator,Leaf"), "set_type", "get_type");
+    ADD_PROPERTYNZ(PropertyInfo(Variant::INT, "node_state", PROPERTY_HINT_ENUM, "Success,Failure,Running,Paused"), "set_state", "get_state");
+    ADD_PROPERTYNZ(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_TYPE_STRING), "set_name", "get_name");
+    ADD_PROPERTYNZ(PropertyInfo(Variant::OBJECT, "parent", PROPERTY_HINT_NONE), "set_parent", "get_parent");
+    ADD_PROPERTYNZ(PropertyInfo(Variant::OBJECT, "root", PROPERTY_HINT_NONE), "set_root", "get_root");
+
+   
     //BIND_CONSTANT(NOTIFICATION_TRANSFORM_CHANGED);
     
     //ADD_SIGNAL(MethodInfo("visibility_changed"));
