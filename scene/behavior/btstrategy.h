@@ -3,13 +3,28 @@
 
 #include "class_db.h"
 #include "map.h"
-#include "node_path.h"
 #include "object.h"
-#include "project_settings.h"
-#include "scene/main/scene_tree.h"
-#include "script_language.h"
+#include "BtSate.h"
 
-class BtStrategy : Object{
+class BtNode;
+class BtStrategy : public Object{
+
+
+private:
+BtNode* owner;
+int current_child=0;
+
+protected:
+	virtual BtState _process(float delta);
+	BtNode* get_owner() const;
+	virtual void _on_init();
+public:
+	void init(BtNode* owner);
+    BtState process(float delta);
+	void set_current_child(int child_index);
+	int get_current_child_index();
+    BtStrategy();
+	~BtStrategy();
 
 };
 

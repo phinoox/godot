@@ -110,6 +110,7 @@ public:
 
 	StringName _physics_process;
 	StringName _process;
+	StringName process_bt;
 	StringName _enter_world;
 	StringName _exit_world;
 	StringName _enter_tree;
