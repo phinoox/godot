@@ -1,4 +1,5 @@
 #include "btstrategy.h"
+#include "btnode.h"
 
 BtState BtStrategy::process(float delta)
 {
@@ -43,13 +44,13 @@ BtStrategy::~BtStrategy()
 
 int BtStrategy::get_current_child_index()
 {
-return current_child;
+return owner->get_current_running();
 
 }
 
 void BtStrategy::set_current_child(int child_index)
 {
-	current_child=child_index;
+	owner->set_current_running(child_index);;
 
 }
 

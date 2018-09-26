@@ -47,17 +47,64 @@ void BtNode::remove_child_notify ( Node* p_child )
 
 BtState BtNode::process_bt(float delta)
 {
-	if (get_script_instance()) {
+	BtState nstate=BtState::BT_STATE_INITIAL;
+	if ( data.strategy!=NULL ){
+           nstate=data.strategy->process ( delta );
+	}
+	//nstate= _process_bt(delta);
+
+	if (get_script_instance() && get_script_instance()->has_method(SceneStringNames::get_singleton()->process_bt))  {
 
 				Variant time = get_process_delta_time();
 				String name=get_name();
-				int res=get_script_instance()->call(SceneStringNames::get_singleton()->process_bt, time);
-				print_line(name+",state:"+String::num(res));
-				return (BtState)res;
+				int res= get_script_instance()->call(SceneStringNames::get_singleton()->process_bt, time);
+				nstate= (BtState)res;
+
 			}
-	if ( data.bt_root==this&&data.strategy!=NULL )
-            return data.strategy->process ( delta );
+
+
+	set_state(nstate);
+	return nstate;
 }
+
+void BtNode::interrupt(String reason, Variant msg_data)
+{
+
+	if (get_script_instance() && get_script_instance()->has_method(SceneStringNames::get_singleton()->_interrupt))  {
+
+		get_script_instance()->call(SceneStringNames::get_singleton()->_interrupt, reason,msg_data);
+	}
+for(int i=0;i<get_child_count();i++){
+
+    _interrupt(reason,msg_data);
+	Object::cast_to<BtNode>(get_child(i))->interrupt(reason,msg_data);
+}
+
+}
+
+void BtNode::_interrupt(String reason, Variant data)
+{
+}
+
+int BtNode::get_current_running() const
+{
+return data.current_running;
+
+}
+void BtNode::set_current_running(int p_index)
+{
+	data.current_running=p_index;
+}
+
+
+
+
+
+BtState  BtNode::_process_bt(float delta)
+{
+	return BtState::BT_STATE_SUCCESS;
+}
+
 
 
 
@@ -182,7 +229,6 @@ void BtNode::_bind_methods()
     BIND_ENUM_CONSTANT ( BT_TYPE_NONE );
 	BIND_ENUM_CONSTANT ( BT_TYPE_SELECTOR );
     BIND_ENUM_CONSTANT ( BT_TYPE_SEQUENCE );
-    BIND_ENUM_CONSTANT ( BT_TYPE_DECORATOR );
     BIND_ENUM_CONSTANT ( BT_TYPE_LEAF );
 
     BIND_ENUM_CONSTANT ( BT_STATE_FAILURE );
@@ -198,16 +244,22 @@ void BtNode::_bind_methods()
     ClassDB::bind_method ( D_METHOD ( "set_type","new_type" ), &BtNode::set_type );
     ClassDB::bind_method ( D_METHOD ( "get_state" ), &BtNode::get_state );
     ClassDB::bind_method ( D_METHOD ( "set_state","new_state" ), &BtNode::set_state );
+	ClassDB::bind_method ( D_METHOD ( "interrupt","reason","msg_data" ), &BtNode::interrupt );
+	ClassDB::bind_method ( D_METHOD ( "set_current_running","index" ), &BtNode::set_current_running );
+    ClassDB::bind_method ( D_METHOD ( "get_current_running" ), &BtNode::get_current_running );
+
 	//ClassDB::add_virtual_method("process_bt",MethodInfo("delta" ), &BtNode::process_bt );
 	//ClassDB::add_virtual_method(MethodInfo("process_bt", PropertyInfo(Variant::REAL, "delta")));
-	BIND_VMETHOD(MethodInfo(PropertyInfo(Variant::INT,"BtState",PROPERTY_HINT_ENUM,"Initial,Success,Running,Failure,Paused"), "process_bt", PropertyInfo(Variant::REAL, "delta")));
+	BIND_VMETHOD(MethodInfo(PropertyInfo("BtState"), "_process_bt", PropertyInfo(Variant::REAL, "delta")));
+	BIND_VMETHOD(MethodInfo("_interrupt", PropertyInfo(Variant::STRING, "reason"),PropertyInfo(Variant::OBJECT,"msg_data")));
 
 
     //ClassDB::bind_method(D_METHOD("add_child_below_node", "node", "child_node", "legible_unique_name"), &Node::add_child_below_node, DEFVAL(false));
     ADD_GROUP ( "Behavior", "" );
     //ADD_PROPERTYNZ(PropertyInfo(Variant::TRANSFORM, "transform", PROPERTY_HINT_NONE, ""), "set_transform", "get_transform");
-    ADD_PROPERTYNZ ( PropertyInfo ( Variant::INT, "node_type", PROPERTY_HINT_ENUM, "None,Selector,Sequence,Decorator,Leaf" ), "set_type", "get_type" );
-    //ADD_PROPERTYNZ ( PropertyInfo ( Variant::INT, "node_state", PROPERTY_HINT_ENUM, "Success,Failure,Running,Paused,Initial" ), "set_state", "get_state" );
+    ADD_PROPERTYNZ ( PropertyInfo ( Variant::INT, "node_type", PROPERTY_HINT_ENUM, "None,Selector,Sequence,Leaf" ), "set_type", "get_type" );
+    ADD_PROPERTYNZ ( PropertyInfo ( Variant::INT, "node_state", PROPERTY_HINT_ENUM, "Initial,Success,Running,Failure,Paused" ), "set_state", "get_state" );
+	ADD_PROPERTYNZ ( PropertyInfo ( Variant::INT, "current_running", PROPERTY_HINT_NONE ), "set_current_running", "get_current_running" );
 
     //ADD_PROPERTYNZ(PropertyInfo(Variant::OBJECT, "root", PROPERTY_HINT_NONE), "set_root", "get_root");
 

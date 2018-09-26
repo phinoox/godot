@@ -12,7 +12,7 @@ class BtStrategy : public Object{
 
 private:
 BtNode* owner;
-int current_child=0;
+
 
 protected:
 	virtual BtState _process(float delta);

@@ -91,7 +91,8 @@ SceneStringNames::SceneStringNames() {
 
 	_physics_process = StaticCString::create("_physics_process");
 	_process = StaticCString::create("_process");
-	process_bt = StaticCString::create("process_bt");
+	process_bt = StaticCString::create("_process_bt");
+	_interrupt = StaticCString::create("_interrupt");
 
 	_enter_tree = StaticCString::create("_enter_tree");
 	_exit_tree = StaticCString::create("_exit_tree");

@@ -18,7 +18,6 @@ OBJ_CATEGORY("Behavior");
 	  BT_TYPE_NONE,
       BT_TYPE_SELECTOR,
       BT_TYPE_SEQUENCE,
-      BT_TYPE_DECORATOR,
       BT_TYPE_LEAF
   };
 
@@ -28,6 +27,7 @@ private:
   struct Data{
   BtNode* bt_parent;
   BtNode* bt_root;
+  int current_running=0;
   Node* bt_owner;
 //  Vector<BtNode*> children;
   BtNodeType node_type;
@@ -35,13 +35,14 @@ private:
   BtStrategy* strategy;
 
   } data;
+  virtual BtState _process_bt(float delta);
 protected:
 
 static void _bind_methods();
 void _notification(int p_what);
 virtual void  add_child_notify(Node * p_child) override;
 virtual void  remove_child_notify(Node * p_child) override;
-
+virtual void _interrupt(String reason,Variant data);
 
 
 public:
@@ -50,11 +51,15 @@ public:
   void set_bt_parent(BtNode* new_parent);
   BtNode* get_bt_parent() const;
   Node* get_bt_owner() const;
+  int get_current_running() const;
+  void set_current_running(int p_index);
   void set_type(BtNodeType nd_type);
   BtNodeType get_type() const;
   void set_state(BtState);
   BtState get_state() const;
-  virtual BtState process_bt(float delta);
+  BtState process_bt(float delta);
+  void interrupt(String reason,Variant msg_data=NULL);
+
   BtNode();
   ~BtNode();
 };
